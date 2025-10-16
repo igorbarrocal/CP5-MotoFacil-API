@@ -41,10 +41,10 @@ namespace MotoFacilAPI.Api.Controllers
         /// <summary>
         /// Busca usuário por ID
         /// </summary>
-        [HttpGet("{id:int}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(typeof(UsuarioDto), 200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<UsuarioDto>> GetById(int id)
+        public async Task<ActionResult<UsuarioDto>> GetById(string id)
         {
             var result = await _service.GetByIdAsync(id);
             if (result is null) return NotFound();
@@ -78,10 +78,10 @@ namespace MotoFacilAPI.Api.Controllers
         /// <summary>
         /// Atualiza usuário
         /// </summary>
-        [HttpPut("{id:int}")]
+        [HttpPut("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> Put(int id, [FromBody] UsuarioDto dto)
+        public async Task<IActionResult> Put(string id, [FromBody] UsuarioDto dto)
         {
             if (!ModelState.IsValid || dto is null)
                 return BadRequest(ModelState);
@@ -93,10 +93,10 @@ namespace MotoFacilAPI.Api.Controllers
         /// <summary>
         /// Remove usuário
         /// </summary>
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             var ok = await _service.DeleteAsync(id);
             return ok ? NoContent() : NotFound();

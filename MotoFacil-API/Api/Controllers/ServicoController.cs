@@ -41,10 +41,10 @@ namespace MotoFacilAPI.Api.Controllers
         /// <summary>
         /// Busca serviço por ID
         /// </summary>
-        [HttpGet("{id:int}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(typeof(ServicoDto), 200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<ServicoDto>> GetById(int id)
+        public async Task<ActionResult<ServicoDto>> GetById(string id)
         {
             var result = await _service.GetByIdAsync(id);
             if (result is null) return NotFound();
@@ -78,10 +78,10 @@ namespace MotoFacilAPI.Api.Controllers
         /// <summary>
         /// Atualiza serviço
         /// </summary>
-        [HttpPut("{id:int}")]
+        [HttpPut("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> Put(int id, [FromBody] ServicoDto dto)
+        public async Task<IActionResult> Put(string id, [FromBody] ServicoDto dto)
         {
             if (!ModelState.IsValid || dto is null)
                 return BadRequest(ModelState);
@@ -93,10 +93,10 @@ namespace MotoFacilAPI.Api.Controllers
         /// <summary>
         /// Remove serviço
         /// </summary>
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             var ok = await _service.DeleteAsync(id);
             return ok ? NoContent() : NotFound();

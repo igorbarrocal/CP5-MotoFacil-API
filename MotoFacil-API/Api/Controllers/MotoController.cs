@@ -14,9 +14,6 @@ namespace MotoFacilAPI.Api.Controllers
         /// <summary>
         /// Lista todas as motos cadastradas (com paginação e HATEOAS)
         /// </summary>
-        /// <param name="page">Número da página</param>
-        /// <param name="pageSize">Tamanho da página</param>
-        /// <response code="200">Retorna a lista paginada de motos</response>
         [HttpGet]
         [ProducesResponseType(typeof(PagedResultDto<MotoDto>), 200)]
         public async Task<ActionResult<PagedResultDto<MotoDto>>> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
@@ -44,13 +41,10 @@ namespace MotoFacilAPI.Api.Controllers
         /// <summary>
         /// Busca moto por ID
         /// </summary>
-        /// <param name="id">ID da moto</param>
-        /// <response code="200">Retorna a moto encontrada</response>
-        /// <response code="404">Moto não encontrada</response>
-        [HttpGet("{id:int}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(typeof(MotoDto), 200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<MotoDto>> GetById(int id)
+        public async Task<ActionResult<MotoDto>> GetById(string id)
         {
             var result = await _service.GetByIdAsync(id);
             if (result == null) return NotFound();
@@ -63,9 +57,6 @@ namespace MotoFacilAPI.Api.Controllers
         /// <summary>
         /// Cria nova moto
         /// </summary>
-        /// <param name="dto">Dados da moto</param>
-        /// <response code="201">Moto criada com sucesso</response>
-        /// <response code="400">Dados inválidos</response>
         [HttpPost]
         [ProducesResponseType(typeof(MotoDto), 201)]
         [ProducesResponseType(400)]
@@ -82,15 +73,11 @@ namespace MotoFacilAPI.Api.Controllers
         /// <summary>
         /// Atualiza uma moto
         /// </summary>
-        /// <param name="id">ID da moto</param>
-        /// <param name="dto">Dados atualizados</param>
-        /// <response code="204">Moto atualizada com sucesso</response>
-        /// <response code="404">Moto não encontrada</response>
-        [HttpPut("{id:int}")]
+        [HttpPut("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Put(int id, [FromBody] MotoDto dto)
+        public async Task<IActionResult> Put(string id, [FromBody] MotoDto dto)
         {
             if (dto == null) return BadRequest("Dados obrigatórios não enviados.");
             var ok = await _service.UpdateAsync(id, dto);
@@ -100,13 +87,10 @@ namespace MotoFacilAPI.Api.Controllers
         /// <summary>
         /// Remove uma moto
         /// </summary>
-        /// <param name="id">ID da moto</param>
-        /// <response code="204">Moto removida com sucesso</response>
-        /// <response code="404">Moto não encontrada</response>
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             var ok = await _service.DeleteAsync(id);
             return ok ? NoContent() : NotFound();
