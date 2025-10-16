@@ -1,23 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MongoDB.Driver;
 using MotoFacilAPI.Domain.Entities;
 using MotoFacilAPI.Domain.Repositories;
-using MotoFacilAPI.Infrastructure.Persistence;
+using MotoFacilAPI.Infrastructure.Data;
 
 namespace MotoFacilAPI.Infrastructure.Repositories
 {
     public class ServicoRepository : IServicoRepository
     {
-        private readonly ApplicationDbContext _ctx;
-        public ServicoRepository(ApplicationDbContext ctx) => _ctx = ctx;
+        private readonly MongoDbContext _ctx;
+        public ServicoRepository(MongoDbContext ctx) => _ctx = ctx;
 
-        public async Task<Servico?> GetByIdAsync(int id) => await _ctx.Servicos.FirstOrDefaultAsync(s => s.Id == id);
-        public async Task<List<Servico>> ListAsync() => await _ctx.Servicos.AsNoTracking().ToListAsync();
-        public async Task AddAsync(Servico servico) { _ctx.Servicos.Add(servico); await _ctx.SaveChangesAsync(); }
-        public async Task UpdateAsync(Servico servico) { _ctx.Servicos.Update(servico); await _ctx.SaveChangesAsync(); }
-        public async Task DeleteAsync(int id)
-        {
-            var entity = await _ctx.Servicos.FindAsync(id);
-            if (entity != null) { _ctx.Servicos.Remove(entity); await _ctx.SaveChangesAsync(); }
-        }
+        public async Task<Servico?> GetByIdAsync(string id) =>
+            await _ctx.Servicos.Find(s => s.Id == id).FirstOrDefaultAsync();
+
+        public async Task<List<Servico>> ListAsync() =>
+            await _ctx.Servicos.Find(_ => true).ToListAsync();
+
+        public async Task AddAsync(Servico servico) =>
+            await _ctx.Servicos.InsertOneAsync(servico);
+
+        public async Task UpdateAsync(Servico servico) =>
+            await _ctx.Servicos.ReplaceOneAsync(s => s.Id == servico.Id, servico);
+
+        public async Task DeleteAsync(string id) =>
+            await _ctx.Servicos.DeleteOneAsync(s => s.Id == id);
     }
 }
