@@ -73,7 +73,7 @@ builder.Services.AddSwaggerGen(c =>
 // HealthCheck (.NET padrão)
 builder.Services.AddHealthChecks()
     .AddMongoDb(
-        connectionString: builder.Configuration.GetConnectionString("MongoDb") ?? "mongodb://localhost:27017",
+        sp => sp.GetRequiredService<IMongoClient>(),
         name: "mongodb",
         timeout: TimeSpan.FromSeconds(3),
         tags: new[] { "db", "mongo" }
