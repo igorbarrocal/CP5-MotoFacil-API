@@ -23,7 +23,7 @@ namespace MotoFacilAPI.Application.Services
             }).ToList();
         }
 
-        public async Task<UsuarioDto?> GetByIdAsync(int id)
+        public async Task<UsuarioDto?> GetByIdAsync(string id)
         {
             var usuario = await _repo.GetByIdAsync(id);
             return usuario is null ? null : new UsuarioDto
@@ -46,7 +46,7 @@ namespace MotoFacilAPI.Application.Services
             };
         }
 
-        public async Task<bool> UpdateAsync(int id, UsuarioDto dto)
+        public async Task<bool> UpdateAsync(string id, UsuarioDto dto)
         {
             var usuario = await _repo.GetByIdAsync(id);
             if (usuario is null) return false;
@@ -56,7 +56,7 @@ namespace MotoFacilAPI.Application.Services
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(string id)
         {
             await _repo.DeleteAsync(id);
             return true;

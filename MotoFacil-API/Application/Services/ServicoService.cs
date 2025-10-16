@@ -23,7 +23,7 @@ namespace MotoFacilAPI.Application.Services
             }).ToList();
         }
 
-        public async Task<ServicoDto?> GetByIdAsync(int id)
+        public async Task<ServicoDto?> GetByIdAsync(string id)
         {
             var s = await _repo.GetByIdAsync(id);
             if (s is null) return null;
@@ -45,7 +45,7 @@ namespace MotoFacilAPI.Application.Services
             return dto;
         }
 
-        public async Task<bool> UpdateAsync(int id, ServicoDto dto)
+        public async Task<bool> UpdateAsync(string id, ServicoDto dto)
         {
             var s = await _repo.GetByIdAsync(id);
             if (s is null) return false;
@@ -54,7 +54,7 @@ namespace MotoFacilAPI.Application.Services
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(string id)
         {
             await _repo.DeleteAsync(id);
             return true;

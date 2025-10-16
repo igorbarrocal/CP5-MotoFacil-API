@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using HealthChecks.MongoDb; // Adicione este using no topo do arquivo
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using MotoFacilAPI.Application.Interfaces;
 using MotoFacilAPI.Application.Services;
@@ -8,16 +9,16 @@ using MotoFacilAPI.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuração do MongoDB
+// Configuração do MongoDbContext
 builder.Services.AddSingleton<MongoDbContext>(sp =>
 {
     var config = builder.Configuration;
     var connString = config.GetConnectionString("MongoDb") ?? "mongodb://localhost:27017";
-    var dbName = config["MongoDbDatabase"] ?? "MotoFacil";
+    var dbName = "MotoFacil"; // ou config["MongoDbDatabase"] se quiser parametrizar
     return new MongoDbContext(connString, dbName);
 });
 
-// Injeta repositórios e serviços (ajuste os nomes se necessário)
+// Injeta repositórios e serviços
 builder.Services.AddScoped<IMotoRepository, MotoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IServicoRepository, ServicoRepository>();
@@ -29,14 +30,14 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 
-// Swagger com versionamento e info
+// Swagger com versionamento e documentação
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "MotoFacil API",
         Version = "v1",
-        Description = "API para gestão de motos, usuários e serviços.",
+        Description = "API para gestão de usuários, motos e serviços. Clean Architecture, DDD e MongoDB.",
         Contact = new OpenApiContact
         {
             Name = "Equipe MotoFacil",
@@ -44,13 +45,28 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 
-    // (Opcional) Para v2, duplique e ajuste o doc
-    // c.SwaggerDoc("v2", new OpenApiInfo { ... });
+    c.SwaggerDoc("v2", new OpenApiInfo
+    {
+        Title = "MotoFacil API",
+        Version = "v2",
+        Description = "MotoFacil API - versão 2. Novidades: novos endpoints, melhorias e correções.",
+        Contact = new OpenApiContact
+        {
+            Name = "Equipe MotoFacil",
+            Email = "suporte@motofacil.com"
+        }
+    });
 
-    // Adicione exemplos, responses, etc., se quiser mais detalhado!
+    // Comentários XML dos controllers e models — precisa gerar o XML no .csproj
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+        c.IncludeXmlComments(xmlPath);
+
+    // Exemplos e responses podem ser implementados via attributes nos DTOs e controllers
 });
 
-// Health Check customizado
+// HealthCheck (.NET padrão)
 builder.Services.AddHealthChecks()
     .AddMongoDb(
         builder.Configuration.GetConnectionString("MongoDb") ?? "mongodb://localhost:27017",
@@ -67,7 +83,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(opt =>
     {
         opt.SwaggerEndpoint("/swagger/v1/swagger.json", "MotoFacil API v1");
-        // opt.SwaggerEndpoint("/swagger/v2/swagger.json", "MotoFacil API v2");
+        opt.SwaggerEndpoint("/swagger/v2/swagger.json", "MotoFacil API v2");
+        opt.RoutePrefix = "swagger"; // URL base do Swagger
     });
 }
 
@@ -75,8 +92,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-// Endpoint HealthCheck (responde em /health)
-app.MapHealthChecks("/health");
+app.MapHealthChecks("/health"); // Endpoint padrão .NET
 
 app.Run();

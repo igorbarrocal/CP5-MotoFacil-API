@@ -16,7 +16,7 @@ namespace MotoFacilAPI.Application.Services
             return list.Select(m => new MotoDto { Id = m.Id, Placa = m.Placa, Modelo = m.Modelo, UsuarioId = m.UsuarioId }).ToList();
         }
 
-        public async Task<MotoDto?> GetByIdAsync(int id)
+        public async Task<MotoDto?> GetByIdAsync(string id)
         {
             var m = await _repo.GetByIdAsync(id);
             if (m is null) return null;
@@ -31,7 +31,7 @@ namespace MotoFacilAPI.Application.Services
             return dto;
         }
 
-        public async Task<bool> UpdateAsync(int id, MotoDto dto)
+        public async Task<bool> UpdateAsync(string id, MotoDto dto)
         {
             var m = await _repo.GetByIdAsync(id);
             if (m is null) return false;
@@ -41,7 +41,7 @@ namespace MotoFacilAPI.Application.Services
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(string id)
         {
             await _repo.DeleteAsync(id);
             return true;

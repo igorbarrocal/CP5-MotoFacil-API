@@ -3,6 +3,7 @@ using MotoFacilAPI.Domain.Entities;
 using MotoFacilAPI.Domain.Repositories;
 using MotoFacilAPI.Infrastructure.Data;
 
+
 namespace MotoFacilAPI.Infrastructure.Repositories
 {
     public class UsuarioRepository : IUsuarioRepository

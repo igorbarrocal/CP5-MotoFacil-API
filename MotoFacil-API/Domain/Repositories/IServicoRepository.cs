@@ -4,10 +4,10 @@ namespace MotoFacilAPI.Domain.Repositories
 {
     public interface IServicoRepository
     {
-        Task<Servico?> GetByIdAsync(int id);
+        Task<Servico?> GetByIdAsync(string id);
         Task<List<Servico>> ListAsync();
         Task AddAsync(Servico servico);
         Task UpdateAsync(Servico servico);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(string id);
     }
 }
