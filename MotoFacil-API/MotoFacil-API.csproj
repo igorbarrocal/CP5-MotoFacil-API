@@ -4,17 +4,25 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<AssemblyName>MotoFacilAPI</AssemblyName>
+		<RootNamespace>MotoFacilAPI</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.11" />
+		<!-- MongoDB Driver -->
 		<PackageReference Include="MongoDB.Driver" Version="3.1.0" />
+		<!-- Swagger/OpenAPI -->
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.11" />
+		<!-- Health Checks -->
 		<PackageReference Include="AspNetCore.HealthChecks.MongoDb" Version="9.0.0" />
+		<!-- JSON Support -->
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.11" />
+		<!-- AutoMapper (if used) -->
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<Folder Include="Infrastructure\Persistence\Migrations\" />
 	</ItemGroup>
