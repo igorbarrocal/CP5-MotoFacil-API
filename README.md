@@ -4,7 +4,7 @@
 **Disciplina:** *Advanced Business Development with .NET*  
 
 👤 **Autores**  
-- Igor Barrocal – RM555217  a
+- Igor Barrocal – RM555217  
 - Cauan da Cruz – RM558238  
 
 ---
@@ -23,24 +23,25 @@ A arquitetura segue os princípios de **Clean Architecture**, **Domain-Driven De
 ## ⚙️ Funcionalidades  
 
 - 👥 **Gerenciamento de Usuários** (CRUD completo, entidade rica, Value Object para e-mail)
-- 🏍️ **Gerenciamento de Motos** (CRUD completo, incluindo vínculo com usuário, enum para modelo da moto: `MottuSport`, `MottuE`, `MottuPop`)
+- 🏍️ **Gerenciamento de Motos** (CRUD completo, vínculo com usuário, enum para modelo da moto: `MottuSport`, `MottuE`, `MottuPop`)
 - 🔧 **Gerenciamento de Serviços** realizados nas motos (CRUD completo, regras de reagendamento)
 - 📦 **Validação de dados** via DTOs e entidades
 - 📑 **Documentação interativa** com Swagger/OpenAPI (descrição de endpoints, parâmetros e exemplos)
-- 🗄️ **Persistência de dados** com Entity Framework Core + Migrations
-- 🧩 **Paginação** nos endpoints de listagem (parâmetros `page`, `pageSize`, retorno `totalCount`)
+- 🗄️ **Persistência de dados** com MongoDB (Atlas ou local)
+- 🧩 **Paginação** nos endpoints de listagem (`page`, `pageSize`, retorno `totalCount`)
 - 🔗 **HATEOAS** (links de navegação nos retornos das entidades)
 - 🔒 **Boas práticas REST**: status code adequado, payloads claros, uso correto dos verbos HTTP
+- 💓 **Health Check** integrado, monitorando aplicação e banco
 
 ---
 
 ## 📂 Estrutura do Projeto  
 src/
 
-┣ 📂 Api — Controllers REST, validações de entrada  
+┣ 📂 Api — Controllers REST, validações de entrada, Swagger  
 ┣ 📂 Application — Serviços de aplicação, DTOs  
 ┣ 📂 Domain — Entidades, enums, Value Objects, Interfaces de Repositório  
-┗ 📂 Infrastructure — Persistência de dados, repositórios  
+┗ 📂 Infrastructure — Persistência de dados, repositórios (MongoDB)  
 
 ---
 
@@ -48,8 +49,7 @@ src/
 
 - [.NET 8](https://dotnet.microsoft.com/)  
 - **C#**  
-- **Entity Framework Core**  
-- **Oracle** (configurável via *appsettings.json*)  
+- **MongoDB** (Atlas ou local)  
 - **Swagger/OpenAPI**  
 
 ---
@@ -83,6 +83,19 @@ src/
 | PUT    | `/servicos/{id}` | Atualizar serviço (reagendar data, etc.) |  
 | DELETE | `/servicos/{id}` | Remover serviço |  
 
+### 💓 Health Check
+| Método | Endpoint    | Descrição                      |
+|--------|-------------|--------------------------------|
+| GET    | `/health`   | Verifica status da aplicação e conexão com MongoDB |
+
+Exemplo de resposta:
+```json
+{
+  "status": "Healthy",
+  "mongo": "Connected"
+}
+```
+
 ---
 
 ## 📝 Exemplos de Payloads  
@@ -104,7 +117,7 @@ POST /motos
 {
   "placa": "ABC1234",
   "modelo": "MottuSport",
-  "usuarioId": 1
+  "usuarioId": "65321edbe773e2e8b0118c1d"
 }
 ```
 
@@ -117,8 +130,8 @@ POST /servicos
 {
   "descricao": "Troca de óleo",
   "data": "2025-09-25T14:00:00Z",
-  "usuarioId": 1,
-  "motoId": 1
+  "usuarioId": "65321edbe773e2e8b0118c1d",
+  "motoId": "65321edbe773e2e8b0118c1e"
 }
 ```
 
@@ -128,6 +141,11 @@ POST /servicos
 
 Todos os endpoints têm modelos de dados detalhados, exemplos de payloads de requisição e resposta, e parâmetros descritos no Swagger.  
 - Acesse [https://localhost:7150/swagger](https://localhost:7150/swagger) após rodar a API.
+
+### Versionamento da API
+
+- Documentação disponível nas versões **v1** e **v2**
+- No Swagger, selecione a versão desejada para visualizar endpoints e novidades
 
 ---
 
@@ -140,24 +158,20 @@ cd MotoFacil-API
 ```
 
 ### 2️⃣ Configure o banco de dados  
-A string de conexão está em `appsettings.Development.json` ou `appsettings.json`.  
-Por padrão, está configurado para Oracle:
+
+Instale e rode o MongoDB localmente (padrão: `mongodb://localhost:27017`)  
+Ou use o [MongoDB Atlas](https://www.mongodb.com/atlas/database), alterando a string de conexão em `appsettings.Development.json` ou `appsettings.json`:
 
 ```json
 "ConnectionStrings": {
-  "Oracle": "Data Source=oracle.fiap.com.br:1521/orcl;User ID=RMxxxxxx;Password=xxxxxx;"
+  "MongoDb": "mongodb://localhost:27017"
 }
 ```
-Altere conforme seu ambiente.
+> **Atenção:** O banco será criado automaticamente na primeira execução.
 
-### 3️⃣ Execute as migrations  
+### 3️⃣ Rode a API  
 ```bash
-dotnet ef database update
-```
-
-### 4️⃣ Rode a API  
-```bash
-dotnet run
+dotnet run --project MotoFacil-API
 ```
 
 Acesse o Swagger em:  
@@ -167,10 +181,19 @@ https://localhost:7150/swagger
 
 ---
 
+## 💡 Observações Finais
+
+- Estrutura em **Clean Architecture** (camadas: Api, Application, Domain, Infrastructure)
+- **DDD**: entidades ricas, Value Object (Email), interfaces de repositório no domínio
+- **Health Check**: endpoint `/health` monitora a aplicação e o banco
+- **Swagger** com versionamento: v1, v2
+- **Commits semânticos** e estrutura de pastas padronizada
+
+---
+
 ## 🧪 Testes
 
-Para rodar os testes (se houver):
+Se houver testes automatizados:
 ```bash
 dotnet test
 ```
-
