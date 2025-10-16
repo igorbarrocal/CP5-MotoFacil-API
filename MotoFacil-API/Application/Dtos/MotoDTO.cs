@@ -5,7 +5,7 @@ namespace MotoFacilAPI.Application.Dtos
 {
     public class MotoDto
     {
-        public int Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [Required]
         public string Placa { get; set; } = string.Empty;
@@ -15,7 +15,7 @@ namespace MotoFacilAPI.Application.Dtos
         public ModeloMoto Modelo { get; set; }
 
         [Required]
-        public int UsuarioId { get; set; }
+        public string UsuarioId { get; set; } = string.Empty;
 
         public List<LinkDto> Links { get; set; } = new();
     }

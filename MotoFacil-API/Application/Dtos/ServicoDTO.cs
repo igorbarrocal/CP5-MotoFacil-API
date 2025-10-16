@@ -7,24 +7,19 @@ namespace MotoFacilAPI.Application.Dtos
     /// </summary>
     public class ServicoDto
     {
-        /// <example>1</example>
-        public int Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
-        /// <example>Troca de óleo</example>
         [Required]
         public string Descricao { get; set; } = string.Empty;
 
-        /// <example>2025-09-25T14:00:00Z</example>
         [Required]
         public DateTime Data { get; set; }
 
-        /// <example>1</example>
         [Required]
-        public int UsuarioId { get; set; }
+        public string UsuarioId { get; set; } = string.Empty;
 
-        /// <example>1</example>
         [Required]
-        public int MotoId { get; set; }
+        public string MotoId { get; set; } = string.Empty;
 
         public List<LinkDto> Links { get; set; } = new();
     }

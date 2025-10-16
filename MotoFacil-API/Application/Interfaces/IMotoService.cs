@@ -5,9 +5,9 @@ namespace MotoFacilAPI.Application.Interfaces
     public interface IMotoService
     {
         Task<List<MotoDto>> ListAsync();
-        Task<MotoDto?> GetByIdAsync(int id);
+        Task<MotoDto?> GetByIdAsync(string id);
         Task<MotoDto> CreateAsync(MotoDto dto);
-        Task<bool> UpdateAsync(int id, MotoDto dto);
-        Task<bool> DeleteAsync(int id);
+        Task<bool> UpdateAsync(string id, MotoDto dto);
+        Task<bool> DeleteAsync(string id);
     }
 }

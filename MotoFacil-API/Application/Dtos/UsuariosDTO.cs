@@ -7,14 +7,11 @@ namespace MotoFacilAPI.Application.Dtos
     /// </summary>
     public class UsuarioDto
     {
-        /// <example>1</example>
-        public int Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
-        /// <example>João Silva</example>
         [Required]
         public string Nome { get; set; } = string.Empty;
 
-        /// <example>joao@email.com</example>
         [Required, EmailAddress]
         public string Email { get; set; } = string.Empty;
 
