@@ -1,22 +1,24 @@
-﻿using MotoFacilAPI.Domain.Enums;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using MotoFacilAPI.Domain.Enums;
 
 namespace MotoFacilAPI.Domain.Entities
 {
-    /// <summary>
-    /// Entidade Moto (Agregado Raiz)
-    /// </summary>
     public class Moto
     {
-        public int Id { get; private set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; } = string.Empty;
+
         public string Placa { get; private set; } = string.Empty;
         public ModeloMoto Modelo { get; private set; }
-        public int UsuarioId { get; private set; }
+        public string UsuarioId { get; private set; } = string.Empty;
 
         public List<Servico> Servicos { get; private set; } = new();
 
         private Moto() { }
 
-        public Moto(string placa, ModeloMoto modelo, int usuarioId)
+        public Moto(string placa, ModeloMoto modelo, string usuarioId)
         {
             if (string.IsNullOrWhiteSpace(placa))
                 throw new ArgumentException("Placa é obrigatória.", nameof(placa));

@@ -1,5 +1,6 @@
-﻿using MotoFacilAPI.Domain.ValueObjects;
-using MotoFacilAPI.Domain.Entities;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using MotoFacilAPI.Domain.ValueObjects;
 
 namespace MotoFacilAPI.Domain.Entities
 {
@@ -8,14 +9,16 @@ namespace MotoFacilAPI.Domain.Entities
     /// </summary>
     public class Usuario
     {
-        public int Id { get; private set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; } = string.Empty;
+
         public string Nome { get; private set; } = string.Empty;
         public Email Email { get; private set; } // Value Object
 
-        // Navegação: um usuário pode ter várias motos
-        public List<Moto> Motos { get; private set; } = new();
+        // Não usar List<Moto> em MongoDB - apenas Ids nas entidades filhas
 
-        private Usuario() { } // EF Core
+        private Usuario() { }
 
         public Usuario(string nome, Email email)
         {
