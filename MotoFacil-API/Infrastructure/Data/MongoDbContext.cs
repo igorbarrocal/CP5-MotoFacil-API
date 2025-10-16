@@ -7,9 +7,8 @@ namespace MotoFacilAPI.Infrastructure.Data
     {
         private readonly IMongoDatabase _database;
 
-        public MongoDbContext(string connectionString, string dbName)
+        public MongoDbContext(IMongoClient client, string dbName)
         {
-            var client = new MongoClient(connectionString);
             _database = client.GetDatabase(dbName);
         }
 

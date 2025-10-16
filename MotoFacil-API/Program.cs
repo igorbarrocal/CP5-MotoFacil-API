@@ -1,24 +1,32 @@
-﻿using HealthChecks.MongoDb; // Adicione este using no topo do arquivo
+﻿using HealthChecks.MongoDb;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using MotoFacilAPI.Application.Interfaces;
 using MotoFacilAPI.Application.Services;
 using MotoFacilAPI.Domain.Repositories;
-using MotoFacilAPI.Infrastructure.Repositories;
 using MotoFacilAPI.Infrastructure.Data;
+using MotoFacilAPI.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuração do MongoDbContext
-builder.Services.AddSingleton<MongoDbContext>(sp =>
+// MongoDB DI registration (IMongoClient + MongoDbContext)
+builder.Services.AddSingleton<IMongoClient>(sp =>
 {
     var config = builder.Configuration;
     var connString = config.GetConnectionString("MongoDb") ?? "mongodb://localhost:27017";
-    var dbName = "MotoFacil"; // ou config["MongoDbDatabase"] se quiser parametrizar
-    return new MongoDbContext(connString, dbName);
+    return new MongoClient(connString);
 });
 
-// Injeta repositórios e serviços
+builder.Services.AddSingleton<MongoDbContext>(sp =>
+{
+    var config = builder.Configuration;
+    var client = sp.GetRequiredService<IMongoClient>();
+    var dbName = "MotoFacil";
+    return new MongoDbContext(client, dbName);
+});
+
+// Repositórios e serviços
 builder.Services.AddScoped<IMotoRepository, MotoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IServicoRepository, ServicoRepository>();
@@ -27,7 +35,6 @@ builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IServicoService, ServicoService>();
 
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
 
 // Swagger com versionamento e documentação
@@ -57,19 +64,16 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 
-    // Comentários XML dos controllers e models — precisa gerar o XML no .csproj
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     if (File.Exists(xmlPath))
         c.IncludeXmlComments(xmlPath);
-
-    // Exemplos e responses podem ser implementados via attributes nos DTOs e controllers
 });
 
 // HealthCheck (.NET padrão)
 builder.Services.AddHealthChecks()
     .AddMongoDb(
-        builder.Configuration.GetConnectionString("MongoDb") ?? "mongodb://localhost:27017",
+        connectionString: builder.Configuration.GetConnectionString("MongoDb") ?? "mongodb://localhost:27017",
         name: "mongodb",
         timeout: TimeSpan.FromSeconds(3),
         tags: new[] { "db", "mongo" }
@@ -84,14 +88,13 @@ if (app.Environment.IsDevelopment())
     {
         opt.SwaggerEndpoint("/swagger/v1/swagger.json", "MotoFacil API v1");
         opt.SwaggerEndpoint("/swagger/v2/swagger.json", "MotoFacil API v2");
-        opt.RoutePrefix = "swagger"; // URL base do Swagger
+        opt.RoutePrefix = "swagger";
     });
 }
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
-
 app.MapControllers();
-app.MapHealthChecks("/health"); // Endpoint padrão .NET
+app.MapHealthChecks("/health");
 
 app.Run();

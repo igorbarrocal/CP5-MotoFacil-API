@@ -14,7 +14,7 @@ namespace MotoFacilAPI.Domain.Entities
         public string Id { get; set; } = string.Empty;
 
         public string Nome { get; private set; } = string.Empty;
-        public Email Email { get; private set; } // Value Object
+        public Email Email { get; private set; } = default!;
 
         // Não usar List<Moto> em MongoDB - apenas Ids nas entidades filhas
 
